@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="حياتي">
+<meta name="theme-color" content="#6B3A2A">
+<title>حياتي</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+body{font-family:Arial,sans-serif;background:#FDF6EE;color:#2C1A0E;direction:rtl;min-height:100vh}
+input,textarea,select{font-family:Arial,sans-serif;outline:none;font-size:14px;color:#2C1A0E}
+input[type=range]{width:100%;accent-color:#C8894A}
+::-webkit-scrollbar{width:3px}::-webkit-scrollbar-thumb{background:#D4B896;border-radius:4px}
+.page{display:none}
+.page.active{display:block}
+#app{padding-bottom:80px}
+/* Header */
+#header{background:linear-gradient(135deg,#6B3A2A,#C8894A);padding:10px 16px;color:white;position:sticky;top:0;z-index:100}
+#back-btn{background:none;border:none;color:white;font-size:14px;cursor:pointer;padding:0;margin-bottom:4px;display:none;font-family:Arial}
+.hr{display:flex;align-items:center;gap:10px}
+/* Nav */
+#nav{position:fixed;bottom:0;left:0;right:0;background:white;border-top:1px solid #EDD5B3;display:flex;z-index:200;overflow-x:auto}
+.nb{flex:0 0 auto;min-width:56px;background:none;border:none;cursor:pointer;padding:6px 3px;display:flex;flex-direction:column;align-items:center;font-family:Arial;color:#999;border-top:2px solid transparent;font-size:9px}
+.nb span:first-child{font-size:18px;margin-bottom:1px}
+.nb.active{color:#C8894A;border-top-color:#C8894A}
+/* Backup bar */
+#bbar{background:#2C1A0E;padding:6px 14px;display:flex;align-items:center;justify-content:space-between;gap:8px;flex-wrap:wrap}
+#bbar > span{font-size:11px;color:#D4B896}
+.bbs{display:flex;gap:6px;flex-wrap:wrap}
+.bb{padding:4px 10px;border-radius:7px;font-size:11px;font-weight:bold;cursor:pointer;border:none;font-family:Arial}
+/* Body */
+.body{padding:14px;max-width:520px;margin:0 auto}
+/* Cards */
+.card{background:#FFF8F0;border-radius:14px;padding:14px;border:1px solid #EDD5B3}
+.hc{background:#FFF8F0;border-radius:14px;padding:14px;border:1px solid #EDD5B3;text-align:center;cursor:pointer}
+.fb{background:#FFF8F0;border-radius:14px;padding:14px;border:1px solid #EDD5B3;margin-bottom:14px}
+.sec-block{background:#FFF8F0;border-radius:14px;padding:14px;border:1px solid #EDD5B3;margin-bottom:12px}
+/* Inputs */
+.inp{padding:9px 12px;border-radius:10px;border:1px solid #EDD5B3;background:#FDF6EE;width:100%;font-size:14px;color:#2C1A0E;display:block}
+.inp:focus{border-color:#C8894A}
+.ta{padding:9px 12px;border-radius:10px;border:1px solid #EDD5B3;background:#FDF6EE;width:100%;resize:none;font-size:14px;color:#2C1A0E;line-height:1.8;display:block}
+.ta:focus{border-color:#C8894A}
+/* Buttons */
+.bm{padding:10px 16px;border-radius:10px;background:#C8894A;color:white;border:none;cursor:pointer;font-size:14px;font-weight:bold;font-family:Arial}
+.bd{width:100%;padding:11px;border-radius:12px;background:#6B3A2A;color:white;border:none;cursor:pointer;font-size:14px;font-weight:bold;margin-bottom:12px;font-family:Arial;display:block}
+.bs{padding:6px 10px;border-radius:8px;background:#F0E6D6;color:#555;border:none;cursor:pointer;font-size:12px;font-family:Arial}
+.bc{padding:10px 14px;border-radius:10px;background:transparent;color:#999;border:1px solid #EDD5B3;cursor:pointer;font-size:14px;font-family:Arial}
+.bd0{background:none;border:none;color:#C8894A;font-size:14px;cursor:pointer;padding:2px 4px}
+.fr{display:flex;gap:8px;align-items:center}
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:8px}
+/* Misc */
+.tag{font-size:11px;background:#F0E6D6;color:#6B3A2A;padding:2px 8px;border-radius:20px;white-space:nowrap;display:inline-block}
+.empty{text-align:center;padding:30px 0;color:#bbb;font-size:14px}
+.av{width:44px;height:44px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:bold;color:white;flex-shrink:0}
+.lbl{font-size:12px;color:#B09070;margin-bottom:5px}
+.emb{font-size:20px;cursor:pointer;border-radius:8px;padding:2px 5px;border:2px solid transparent;background:transparent}
+.emb.sel{background:#F5DEC8;border-color:#C8894A}
+.dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-left:4px}
+.tw{overflow-x:auto;border-radius:10px;border:1px solid #EDD5B3;margin-bottom:14px}
+table{width:100%;border-collapse:collapse;font-size:12px}
+th{background:#6B3A2A;color:white;padding:7px 8px;text-align:right;white-space:nowrap}
+td{padding:7px 8px;vertical-align:top;border-bottom:1px solid #EDD5B3}
+tr:nth-child(even) td{background:#FFF8F0}
+tr:nth-child(odd) td{background:#FDF6EE}
+.iframe-pg{height:calc(100vh - 115px)}
+.iframe-pg iframe{width:100%;height:100%;border:none;display:block}
+</style>
+</head>
+<body>
+
+<div id="bbar">
+  <span>💾 بياناتك محفوظة محلياً</span>
+  <div class="bbs">
+    <button class="bb" style="background:#C8894A;color:white" onclick="exportData()">📤 تصدير</button>
+    <button class="bb" style="background:transparent;color:#C8894A;border:1px solid #C8894A" onclick="triggerImp('json')">📥 استيراد بيانات</button>
+    <button class="bb" style="background:#6B3A2A;color:#D4B896;border:1px solid #C8894A" onclick="triggerImp('html')">➕ إضافة صفحة HTML</button>
+  </div>
+  <input id="imp-json" type="file" accept=".json" style="display:none" onchange="importJSON(event)">
+  <input id="imp-html" type="file" accept=".html" style="display:none" onchange="importHTML(event)">
+</div>
+
+<div id="header">
+  <button id="back-btn" onclick="goBack()">← رجوع</button>
+  <div class="hr">
+    <span id="h-icon" style="font-size:22px">🏠</span>
+    <div>
+      <div id="h-title" style="font-size:17px;font-weight:bold">الرئيسية</div>
+      <div style="font-size:10px;opacity:.8;margin-top:1px">كل حاجة في مكان واحد</div>
+    </div>
+  </div>
+</div>
+
+<div id="app">
+  <div id="pg-home"        class="page active body"></div>
+  <div id="pg-finance"     class="page body"></div>
+  <div id="pg-sav"         class="page body"></div>
+  <div id="pg-thoughts"    class="page body"></div>
+  <div id="pg-friends"     class="page body"></div>
+  <div id="pg-frd"         class="page body"></div>
+  <div id="pg-courses"     class="page body"></div>
+  <div id="pg-cod"         class="page body"></div>
+  <div id="pg-content"     class="page body"></div>
+  <div id="pg-cs"          class="page body"></div>
+  <div id="pg-yt-series"   class="page body"></div>
+  <div id="pg-yt-ep"       class="page body"></div>
+  <div id="pg-english"     class="page body"></div>
+  <div id="pg-en-episodes" class="page body"></div>
+  <div id="pg-en-ep-d"     class="page body"></div>
+  <div id="pg-en-vocab"    class="page body"></div>
+  <div id="pg-en-grammar"  class="page body"></div>
+  <div id="pg-en-expr"     class="page body"></div>
+  <div id="pg-schedule"    class="page iframe-pg"><iframe id="fr-sched" title="الجدول"></iframe></div>
+  <div id="pg-ruqya"       class="page iframe-pg"><iframe id="fr-ruqya" title="الرقية"></iframe></div>
+</div>
+
+<div id="nav"></div>
+
+<script>
+// ═══════════ DATA ═══════════
+const SK = "hayati-v2";
+const AC = ["#E8A598","#A8C4A2","#9BB5D6","#C4A8D6","#D6C4A8","#A8D6C4","#D6A8B5"];
+const EMOJIS = ["💛","🤝","🎉","🙌","💪","🥰","✨","🫂","🏆","🌟"];
+let D = {
+  finance:{transactions:[],savings:{me:[],wife:[]}},
+  thoughts:{entries:[]},
+  friends:{list:{}},
+  courses:{list:{}},
+  content:{books:[],podcasts:[],movies:[],youtube:[]},
+  english:{vocab:[],episodes:[],grammar:[],expressions:[]},
+  extraPages:[]
+};
+
+function load(){
+  try{ var v=localStorage.getItem(SK); if(v){ var p=JSON.parse(v); D=Object.assign({},D,p); } }catch(e){}
+  if(!D.finance.savings) D.finance.savings={me:[],wife:[]};
+  if(!D.english) D.english={vocab:[],episodes:[],grammar:[],expressions:[]};
+  if(!D.extraPages) D.extraPages=[];
+}
+function save(){ try{ localStorage.setItem(SK,JSON.stringify(D)); }catch(e){ alert("خطأ: "+e.message); } }
+function uid(){ return Date.now().toString(36)+Math.random().toString(36).slice(2,5); }
+function today(){ return new Date().toISOString().slice(0,10); }
+function ini(n){ return ((n||"").split(" ").map(function(w){return w[0]||"";}).join("").toUpperCase().slice(0,2))||"؟"; }
+function h(s){ return (s||"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;"); }
+function n2(n){ return Number(n||0).toFixed(2); }
+
+// ═══════════ NAV ═══════════
+var curTab="home", pageStack=["home"], frLoaded={};
+
+var BASE_TABS=[
+  {id:"home",    icon:"🏠",label:"الرئيسية"},
+  {id:"finance", icon:"💷",label:"المال"},
+  {id:"thoughts",icon:"💭",label:"الأفكار"},
+  {id:"friends", icon:"👥",label:"الأصدقاء"},
+  {id:"courses", icon:"🎓",label:"التعلم"},
+  {id:"content", icon:"📚",label:"المحتوى"},
+  {id:"english", icon:"🇬🇧",label:"إنجليزي"},
+  {id:"schedule",icon:"📅",label:"الجدول"},
+  {id:"ruqya",   icon:"🤲",label:"الرقية"}
+];
+
+function getTabs(){
+  var extras=(D.extraPages||[]).map(function(p){return {id:p.id,icon:"📄",label:(p.name||"").slice(0,6)};});
+  return BASE_TABS.concat(extras);
+}
+
+function buildNav(){
+  var tabs=getTabs();
+  var html="";
+  for(var i=0;i<tabs.length;i++){
+    var t=tabs[i];
+    var active=t.id===curTab?" active":"";
+    html+='<button class="nb'+active+'" onclick="sw(\''+t.id+'\')"><span>'+t.icon+'</span><span>'+h(t.label)+'</span></button>';
+  }
+  document.getElementById("nav").innerHTML=html;
+}
+
+function showPg(id,title,icon,back){
+  var all=document.querySelectorAll(".page");
+  for(var i=0;i<all.length;i++) all[i].classList.remove("active");
+  var pg=document.getElementById("pg-"+id);
+  if(pg) pg.classList.add("active");
+  document.getElementById("h-title").textContent=title;
+  document.getElementById("h-icon").textContent=icon;
+  document.getElementById("back-btn").style.display=back?"block":"none";
+}
+
+function sw(tab){
+  curTab=tab; pageStack=[tab]; buildNav();
+  var tabs=getTabs();
+  var t=tabs.filter(function(x){return x.id===tab;})[0]||{label:tab,icon:"📄"};
+  showPg(tab,t.label,t.icon,false);
+  if(tab==="home")     rHome();
+  else if(tab==="finance")  rFinance();
+  else if(tab==="thoughts") rThoughts();
+  else if(tab==="friends")  rFriends();
+  else if(tab==="courses")  rCourses();
+  else if(tab==="content")  rContent();
+  else if(tab==="english")  rEnglish();
+  else if(tab==="schedule") loadFr("schedule","fr-sched","الجدول");
+  else if(tab==="ruqya")    loadFr("ruqya","fr-ruqya","الرقية");
+  else if(tab.indexOf("extra-")===0) loadFr(tab,"fr-"+tab,(D.extraPages.filter(function(p){return p.id===tab;})[0]||{name:"صفحة"}).name);
+}
+
+function loadFr(tabId,frId,name){
+  var fr=document.getElementById(frId);
+  if(!fr||frLoaded[tabId]) return;
+  var stored=localStorage.getItem("hayati-iframe-"+tabId);
+  if(stored){ fr.srcdoc=stored; frLoaded[tabId]=true; }
+  else {
+    fr.srcdoc='<html dir="rtl"><body style="font-family:Arial;padding:30px;background:#FDF6EE;text-align:center"><h2 style="color:#6B3A2A;margin-bottom:16px">'+name+'</h2><p style="color:#888">اضغط ➕ إضافة صفحة HTML في الشريط العلوي</p></body></html>';
+  }
+}
+
+function goBack(){
+  pageStack.pop();
+  var prev=pageStack[pageStack.length-1]||curTab;
+  var tabs=getTabs();
+  var t=tabs.filter(function(x){return x.id===prev;})[0]||{label:prev,icon:"📄"};
+  showPg(prev,t.label,t.icon,pageStack.length>1);
+  if(prev==="home")         rHome();
+  else if(prev==="friends") rFriends();
+  else if(prev==="courses") rCourses();
+  else if(prev==="content") rContent();
+  else if(prev==="english") rEnglish();
+  else if(prev==="yt-series") rYTS(window._sid);
+  else if(prev==="cs")      rCS(window._sec);
+  else if(prev==="en-episodes") rEnEps();
+  else if(prev==="en-vocab")    rEnVocab();
+  else if(prev==="en-grammar")  rEnGr();
+  else if(prev==="en-expr")     rEnEx();
+  else sw(curTab);
+}
+
+function nav2(pgId,title,icon,fn){
+  pageStack.push(pgId);
+  showPg(pgId,title,icon,true);
+  if(fn) fn();
+}
+
+function pg(id){ return document.getElementById("pg-"+id); }
+function set(id,html){ var el=document.getElementById("pg-"+id); if(el) el.innerHTML=html; }
+
+// ═══════════ HOME ═══════════
+function rHome(){
+  var fi=D.finance;
+  var tIn=0,tOut=0;
+  fi.transactions.forEach(function(t){ if(t.type==="in") tIn+=Number(t.amount); else tOut+=Number(t.amount); });
+  var meSav=0,wfSav=0;
+  (fi.savings.me||[]).forEach(function(t){ meSav+=(t.type==="in"?1:-1)*Number(t.amount); });
+  (fi.savings.wife||[]).forEach(function(t){ wfSav+=(t.type==="in"?1:-1)*Number(t.amount); });
+  var bal=tIn-tOut;
+
+  var cards=[
+    ["💷","الرصيد","£"+n2(bal),"finance","#A8C4A2"],
+    ["🏦","الادخار","£"+n2(meSav+wfSav),"finance","#9BB5D6"],
+    ["💭","الأفكار",D.thoughts.entries.length+" فكرة","thoughts","#C4A8D6"],
+    ["👥","الأصدقاء",Object.keys(D.friends.list).length+" صديق","friends","#E8A598"],
+    ["🎓","الدورات",Object.keys(D.courses.list).length+" دورة","courses","#D6C4A8"],
+    ["🇬🇧","الإنجليزي",(D.english.episodes.length+D.english.vocab.length)+" عنصر","english","#A8D6C4"],
+    ["📅","الجدول","اضغط","schedule","#D6A8B5"],
+    ["🤲","الرقية","اضغط","ruqya","#C4A8D6"]
+  ];
+
+  var html='<div style="font-size:16px;font-weight:bold;color:#6B3A2A;margin-bottom:14px">أهلاً! 👋 إيه جديدك؟</div><div class="g2">';
+  for(var i=0;i<cards.length;i++){
+    var c=cards[i];
+    html+='<div class="hc" style="border-top:3px solid '+c[4]+'" onclick="sw(\''+c[3]+'\')"><div style="font-size:24px;margin-bottom:4px">'+c[0]+'</div><div style="font-size:12px;color:#888">'+h(c[1])+'</div><div style="font-size:14px;font-weight:bold;margin-top:2px">'+h(c[2])+'</div></div>';
+  }
+  var extras=D.extraPages||[];
+  for(var j=0;j<extras.length;j++){
+    var ep=extras[j];
+    html+='<div style="position:relative"><div class="hc" style="border-top:3px solid #D6C4A8" onclick="sw(\''+ep.id+'\')"><div style="font-size:22px;margin-bottom:4px">📄</div><div style="font-size:12px;color:#888">'+h(ep.name)+'</div><div style="font-size:11px;color:#C8894A;margin-top:2px">مفتوح</div></div><button onclick="delEP(\''+ep.id+'\')" style="position:absolute;top:4px;left:4px;background:none;border:none;color:#E8A598;font-size:14px;cursor:pointer">✕</button></div>';
+  }
+  html+='</div>';
+  set("home",html);
+}
+
+// ═══════════ FINANCE ═══════════
+function rFinance(sf){
+  var fi=D.finance;
+  var txs=fi.transactions.slice().sort(function(a,b){return b.date.localeCompare(a.date);});
+  var tIn=0,tOut=0;
+  txs.forEach(function(t){if(t.type==="in")tIn+=Number(t.amount);else tOut+=Number(t.amount);});
+  var bal=tIn-tOut;
+  var sv=fi.savings||{me:[],wife:[]};
+  var meBal=0,wfBal=0;
+  (sv.me||[]).forEach(function(t){meBal+=(t.type==="in"?1:-1)*Number(t.amount);});
+  (sv.wife||[]).forEach(function(t){wfBal+=(t.type==="in"?1:-1)*Number(t.amount);});
+
+  var html='<div class="g3" style="margin-bottom:12px">';
+  html+='<div class="card" style="text-align:center;border-top:3px solid #A8C4A2;padding:10px"><div style="font-size:10px;color:#888">💚 دخل</div><div style="font-size:13px;font-weight:bold;margin-top:3px">£'+n2(tIn)+'</div></div>';
+  html+='<div class="card" style="text-align:center;border-top:3px solid #E8A598;padding:10px"><div style="font-size:10px;color:#888">❤️ مصاريف</div><div style="font-size:13px;font-weight:bold;margin-top:3px">£'+n2(tOut)+'</div></div>';
+  html+='<div class="card" style="text-align:center;border-top:3px solid #9BB5D6;padding:10px"><div style="font-size:10px;color:#888">💷 رصيد</div><div style="font-size:13px;font-weight:bold;margin-top:3px;color:'+(bal>=0?"#4a9c6d":"#c05050")+'">£'+n2(bal)+'</div></div>';
+  html+='</div>';
+  html+='<div class="g2" style="margin-bottom:12px">';
+  html+='<div class="hc" style="border-top:3px solid #9BB5D6;padding:12px" onclick="rSav(\'me\')"><div style="font-size:11px;color:#888;margin-bottom:4px">🏦 ادخاري</div><div style="font-size:16px;font-weight:bold;color:'+(meBal>=0?"#4a9c6d":"#c05050")+'">£'+n2(meBal)+'</div><div style="font-size:10px;color:#C8894A;margin-top:3px">← تفاصيل</div></div>';
+  html+='<div class="hc" style="border-top:3px solid #9BB5D6;padding:12px" onclick="rSav(\'wife\')"><div style="font-size:11px;color:#888;margin-bottom:4px">💑 ادخار زوجتي</div><div style="font-size:16px;font-weight:bold;color:'+(wfBal>=0?"#4a9c6d":"#c05050")+'">£'+n2(wfBal)+'</div><div style="font-size:10px;color:#C8894A;margin-top:3px">← تفاصيل</div></div>';
+  html+='</div>';
+  html+='<button class="bd" onclick="rFinance(true)">+ أضف معاملة</button>';
+  if(sf){
+    html+='<div class="fb"><div class="fr" style="margin-bottom:10px">';
+    html+='<button id="tx-in" class="bs" style="flex:1;background:#A8C4A2;color:#2C1A0E" onclick="setTT(\'in\')">💚 دخل</button>';
+    html+='<button id="tx-out" class="bs" style="flex:1;background:#E8A598;color:#2C1A0E" onclick="setTT(\'out\')">❤️ مصروف</button>';
+    html+='</div>';
+    html+='<input id="tx-lb" class="inp" placeholder="الوصف..." style="margin-bottom:8px">';
+    html+='<input id="tx-am" class="inp" type="number" placeholder="المبلغ £" style="margin-bottom:8px">';
+    html+='<select id="tx-ct" class="inp" style="margin-bottom:8px"><option>طعام</option><option>مواصلات</option><option>فواتير</option><option>ترفيه</option><option>تعليم</option><option>صحة</option><option>ملابس</option><option>عام</option></select>';
+    html+='<input id="tx-dt" class="inp" type="date" value="'+today()+'" style="margin-bottom:8px">';
+    html+='<div class="fr"><button class="bm" style="flex:1" onclick="addTx()">حفظ</button><button class="bc" onclick="rFinance()">إلغاء</button></div></div>';
+  }
+  html+='<div>';
+  if(txs.length===0) html+='<div class="empty">لا توجد معاملات بعد</div>';
+  for(var i=0;i<txs.length;i++){
+    var t=txs[i];
+    html+='<div class="card fr" style="margin-bottom:8px;padding:10px 12px"><div style="font-size:18px">'+(t.type==="in"?"💚":"❤️")+'</div><div style="flex:1;margin:0 10px"><div style="font-size:13px;font-weight:bold">'+h(t.label)+'</div><div style="font-size:11px;color:#999">'+(t.cat||"")+" · "+t.date+'</div></div><div style="font-size:13px;font-weight:bold;color:'+(t.type==="in"?"#4a9c6d":"#c05050")+'">'+(t.type==="in"?"+":"-")+"£"+n2(t.amount)+'</div><button class="bd0" onclick="delTx(\''+t.id+'\')">✕</button></div>';
+  }
+  html+='</div>';
+  set("finance",html);
+  window._txType="out";
+}
+function setTT(tp){ window._txType=tp; var i=document.getElementById("tx-in"),o=document.getElementById("tx-out"); if(i&&o){i.style.opacity=tp==="in"?"1":"0.5";o.style.opacity=tp==="out"?"1":"0.5";} }
+function addTx(){ var lb=document.getElementById("tx-lb").value.trim(),am=document.getElementById("tx-am").value; if(!lb||!am) return; D.finance.transactions.unshift({id:uid(),type:window._txType||"out",label:lb,amount:am,cat:document.getElementById("tx-ct").value,date:document.getElementById("tx-dt").value||today()}); save(); rFinance(); }
+function delTx(id){ D.finance.transactions=D.finance.transactions.filter(function(t){return t.id!==id;}); save(); rFinance(); }
+
+function rSav(who,sf){
+  var lbl=who==="me"?"🏦 ادخاري":"💑 ادخار زوجتي";
+  if(pageStack[pageStack.length-1]!=="sav") nav2("sav",lbl,"🏦",null);
+  else showPg("sav",lbl,"🏦",true);
+  var sv=D.finance.savings,list=(sv[who]||[]).slice().reverse();
+  var bal=0; (sv[who]||[]).forEach(function(t){bal+=(t.type==="in"?1:-1)*Number(t.amount);});
+  var html='<div class="card" style="text-align:center;border-top:3px solid #9BB5D6;margin-bottom:14px"><div style="font-size:13px;color:#888">'+lbl+'</div><div style="font-size:24px;font-weight:bold;color:'+(bal>=0?"#4a9c6d":"#c05050")+';margin-top:4px">£'+n2(bal)+'</div></div>';
+  html+='<button class="bd" onclick="rSav(\''+who+'\',true)">+ أضف حركة</button>';
+  if(sf){
+    html+='<div class="fb"><div class="fr" style="margin-bottom:10px"><button id="sv-in" class="bs" style="flex:1;background:#A8C4A2;color:#2C1A0E" onclick="setST(\'in\')">💚 إيداع</button><button id="sv-out" class="bs" style="flex:1;background:#E8A598;color:#2C1A0E" onclick="setST(\'out\')">❤️ سحب</button></div><input id="sv-lb" class="inp" placeholder="الوصف..." style="margin-bottom:8px"><input id="sv-am" class="inp" type="number" placeholder="المبلغ £" style="margin-bottom:8px"><input id="sv-dt" class="inp" type="date" value="'+today()+'" style="margin-bottom:8px"><div class="fr"><button class="bm" style="flex:1" onclick="addSav(\''+who+'\')">حفظ</button><button class="bc" onclick="rSav(\''+who+'\')">إلغاء</button></div></div>';
+  }
+  if(list.length===0) html+='<div class="empty">لا توجد حركات بعد</div>';
+  for(var i=0;i<list.length;i++){
+    var t=list[i];
+    html+='<div class="card fr" style="margin-bottom:8px;padding:10px 12px"><div style="font-size:18px">'+(t.type==="in"?"💚":"❤️")+'</div><div style="flex:1;margin:0 10px"><div style="font-size:13px;font-weight:bold">'+h(t.label)+'</div><div style="font-size:11px;color:#999">'+t.date+'</div></div><div style="font-size:13px;font-weight:bold;color:'+(t.type==="in"?"#4a9c6d":"#c05050")+'">'+(t.type==="in"?"+":"-")+"£"+n2(t.amount)+'</div><button class="bd0" onclick="delSav(\''+who+'\',\''+t.id+'\')">✕</button></div>';
+  }
+  set("sav",html);
+  window._svType="in"; window._svWho=who;
+}
+function setST(tp){ window._svType=tp; var i=document.getElementById("sv-in"),o=document.getElementById("sv-out"); if(i&&o){i.style.opacity=tp==="in"?"1":"0.5";o.style.opacity=tp==="out"?"1":"0.5";} }
+function addSav(who){ var lb=document.getElementById("sv-lb").value.trim(),am=document.getElementById("sv-am").value; if(!lb||!am) return; if(!D.finance.savings[who]) D.finance.savings[who]=[]; D.finance.savings[who].push({id:uid(),type:window._svType||"in",label:lb,amount:am,date:document.getElementById("sv-dt").value||today()}); save(); rSav(who); }
+function delSav(who,id){ D.finance.savings[who]=(D.finance.savings[who]||[]).filter(function(t){return t.id!==id;}); save(); rSav(who); }
+
+// ═══════════ THOUGHTS ═══════════
+var _stag="فكرة";
+function rThoughts(q){ q=q||"";
+  var TAGS=["فكرة","خاطرة","هدف","ملاحظة","سؤال","إلهام"];
+  var entries=D.thoughts.entries.filter(function(e){return !q||(e.text+e.tag).indexOf(q)>=0;});
+  var html='<div class="fb"><textarea id="th-tx" class="ta" rows="3" placeholder="اكتب فكرتك..." style="margin-bottom:10px"></textarea><div class="fr" style="flex-wrap:wrap;gap:6px;margin-bottom:10px">';
+  for(var i=0;i<TAGS.length;i++){
+    html+='<button class="bs" onclick="selTag(\''+TAGS[i]+'\')" style="background:'+(_stag===TAGS[i]?"#C8894A":"#F0E6D6")+';color:'+(_stag===TAGS[i]?"white":"#555")+'">'+TAGS[i]+'</button>';
+  }
+  html+='</div><button class="bd" style="margin-bottom:0" onclick="addTh()">+ أضف</button></div>';
+  html+='<input class="inp" value="'+h(q)+'" placeholder="🔍 ابحث..." oninput="rThoughts(this.value)" style="margin-bottom:12px">';
+  if(entries.length===0) html+='<div class="empty">لا توجد أفكار بعد</div>';
+  for(var i=0;i<entries.length;i++){
+    var e=entries[i];
+    html+='<div class="card" style="margin-bottom:10px;padding:14px"><div class="fr" style="justify-content:space-between;margin-bottom:6px"><span class="tag">'+h(e.tag)+'</span><span style="font-size:11px;color:#bbb">'+e.date+'</span></div><div style="font-size:14px;line-height:1.7;color:#333">'+h(e.text)+'</div><button class="bd0" style="margin-top:6px;font-size:12px" onclick="delTh(\''+e.id+'\')">✕ حذف</button></div>';
+  }
+  set("thoughts",html);
+}
+function selTag(t){ _stag=t; rThoughts(); }
+function addTh(){ var tx=document.getElementById("th-tx").value.trim(); if(!tx) return; D.thoughts.entries.unshift({id:uid(),text:tx,tag:_stag,date:today()}); save(); rThoughts(); }
+function delTh(id){ D.thoughts.entries=D.thoughts.entries.filter(function(e){return e.id!==id;}); save(); rThoughts(); }
+
+// ═══════════ FRIENDS ═══════════
+var _sfreq="أسبوعي";
+function rFriends(){
+  var FREQS=["يومي","أسبوعي","شهري","حسب الفرصة"];
+  var friends=Object.values(D.friends.list).sort(function(a,b){
+    if(!a.lastContact&&!b.lastContact) return 0;
+    if(!a.lastContact) return 1; if(!b.lastContact) return -1;
+    return b.lastContact.localeCompare(a.lastContact);
+  });
+  var html='<div class="fb"><input id="fr-nm" class="inp" placeholder="اسم الصديق..." style="margin-bottom:8px"><div class="fr" style="flex-wrap:wrap;gap:6px;margin-bottom:8px">';
+  for(var i=0;i<FREQS.length;i++){
+    html+='<button class="bs" onclick="selFreq(\''+FREQS[i]+'\')" style="background:'+(_sfreq===FREQS[i]?"#C8894A":"#F0E6D6")+';color:'+(_sfreq===FREQS[i]?"white":"#555")+'">'+FREQS[i]+'</button>';
+  }
+  html+='</div><button class="bd" style="margin-bottom:0" onclick="addFr()">+ أضف صديق</button></div>';
+  if(friends.length===0) html+='<div class="empty">لا يوجد أصدقاء بعد</div>';
+  for(var i=0;i<friends.length;i++){
+    var f=friends[i];
+    var ds=f.lastContact?Math.floor((new Date()-new Date(f.lastContact))/86400000):999;
+    var dc=ds<=7?"#A8C4A2":ds<=30?"#D6C4A8":"#E8A598";
+    var dt=f.lastContact?(ds===0?"اليوم":ds===1?"أمس":ds+" يوم"):"لم يتم التواصل";
+    html+='<div class="card fr" style="margin-bottom:10px;cursor:pointer" onclick="opnFr(\''+f.id+'\')"><div class="av" style="background:'+f.color+'">'+ini(f.name)+'</div><div style="flex:1;margin:0 12px"><div style="font-size:15px;font-weight:bold">'+h(f.name)+'</div><div style="font-size:11px;color:#999">'+h(f.freq)+' · '+((f.moments||[]).length)+' لحظة</div><div style="font-size:11px;margin-top:2px"><span class="dot" style="background:'+dc+'"></span>'+dt+'</div></div><span style="color:#C8894A">←</span></div>';
+  }
+  set("friends",html);
+}
+function selFreq(f){ _sfreq=f; rFriends(); }
+function addFr(){ var n=document.getElementById("fr-nm").value.trim(); if(!n) return; var id=uid(); D.friends.list[id]={id:id,name:n,color:AC[Object.keys(D.friends.list).length%AC.length],freq:_sfreq,moments:[],lastContact:""}; save(); rFriends(); }
+function opnFr(fid){ window._fid=fid; nav2("frd",D.friends.list[fid]&&D.friends.list[fid].name||"","👤",function(){rFrd(fid);}); }
+function rFrd(fid,sf){
+  var f=D.friends.list[fid]; if(!f) return;
+  var EMJS=["💛","🤝","🎉","🙌","💪","🥰","✨","🫂","🏆","🌟"];
+  if(!window._mej) window._mej="💛";
+  var html='<div class="card fr" style="margin-bottom:14px"><div class="av" style="background:'+f.color+';width:54px;height:54px;font-size:18px">'+ini(f.name)+'</div><div style="margin-right:14px"><div style="font-size:18px;font-weight:bold">'+h(f.name)+'</div><div style="font-size:12px;color:#999">تواصل '+h(f.freq)+'</div>'+(f.lastContact?'<div style="font-size:11px;color:#aaa">آخر تواصل: '+f.lastContact+'</div>':'')+' </div></div>';
+  html+='<button class="bs" style="background:#A8C4A2;color:#2C1A0E;width:100%;padding:10px;margin-bottom:8px" onclick="logC(\''+fid+'\')">✅ سجّل تواصل النهارده</button>';
+  html+='<button class="bd" onclick="rFrd(\''+fid+'\',true)">✨ أضف لحظة جميلة</button>';
+  if(sf){
+    html+='<div class="fb"><textarea id="mm-tx" class="ta" rows="3" placeholder="الموقف الجميل..." style="margin-bottom:8px"></textarea><div class="fr" style="flex-wrap:wrap;gap:4px;margin-bottom:8px">';
+    for(var i=0;i<EMJS.length;i++){
+      html+='<button class="emb'+(window._mej===EMJS[i]?" sel":"")+'" onclick="selME(\''+EMJS[i]+'\')">'+EMJS[i]+'</button>';
+    }
+    html+='</div><input id="mm-dt" class="inp" type="date" value="'+today()+'" style="margin-bottom:8px"><div class="fr"><button class="bm" style="flex:1" onclick="addMom(\''+fid+'\')">حفظ</button><button class="bc" onclick="rFrd(\''+fid+'\')">إلغاء</button></div></div>';
+  }
+  html+='<div style="margin-top:10px"><div style="font-size:13px;font-weight:bold;color:#6B3A2A;margin-bottom:8px">اللحظات 🌟</div>';
+  var moms=(f.moments||[]).slice().reverse();
+  if(moms.length===0) html+='<div class="empty">لا توجد لحظات بعد</div>';
+  for(var i=0;i<moms.length;i++){
+    var m=moms[i];
+    html+='<div class="card fr" style="margin-bottom:8px;padding:12px"><div style="font-size:22px">'+m.emoji+'</div><div style="flex:1;margin:0 10px"><div style="font-size:13px;line-height:1.6">'+h(m.text)+'</div><div style="font-size:11px;color:#bbb;margin-top:3px">'+m.date+'</div></div><button class="bd0" onclick="delMom(\''+fid+'\',\''+m.id+'\')">✕</button></div>';
+  }
+  html+='</div>';
+  set("frd",html);
+}
+function logC(fid){ D.friends.list[fid].lastContact=today(); save(); rFrd(fid); }
+function selME(em){ window._mej=em; document.querySelectorAll(".emb").forEach(function(b){b.classList.toggle("sel",b.textContent===em);}); }
+function addMom(fid){ var tx=document.getElementById("mm-tx").value.trim(); if(!tx) return; D.friends.list[fid].moments.push({id:uid(),text:tx,emoji:window._mej||"💛",date:document.getElementById("mm-dt").value||today()}); save(); rFrd(fid); }
+function delMom(fid,mid){ D.friends.list[fid].moments=D.friends.list[fid].moments.filter(function(m){return m.id!==mid;}); save(); rFrd(fid); }
+
+// ═══════════ COURSES ═══════════
+function rCourses(sf){
+  var list=Object.values(D.courses.list);
+  var html='<button class="bd" onclick="rCourses(true)">+ أضف دورة</button>';
+  if(sf) html+='<div class="fb"><input id="co-nm" class="inp" placeholder="اسم الدورة *" style="margin-bottom:8px"><input id="co-pl" class="inp" placeholder="المنصة..." style="margin-bottom:8px"><div class="fr"><button class="bm" style="flex:1" onclick="addCo()">حفظ</button><button class="bc" onclick="rCourses()">إلغاء</button></div></div>';
+  if(list.length===0) html+='<div class="empty">لا توجد دورات بعد</div>';
+  for(var i=0;i<list.length;i++){
+    var c=list[i];
+    html+='<div class="card" style="margin-bottom:10px;cursor:pointer" onclick="opnCo(\''+c.id+'\')"><div class="fr" style="justify-content:space-between;margin-bottom:6px"><div style="font-size:15px;font-weight:bold">'+h(c.name)+'</div><span class="tag" style="background:#C4A8D6">'+(c.platform||"—")+'</span></div><div style="font-size:12px;color:#999">'+((c.notes||[]).length)+' ملاحظة</div><div style="background:#EDD5B3;border-radius:10px;height:6px;margin-top:8px"><div style="background:#C8894A;border-radius:10px;height:6px;width:'+(c.progress||0)+'%"></div></div><div style="font-size:11px;color:#aaa;margin-top:3px">'+(c.progress||0)+'% مكتمل</div></div>';
+  }
+  set("courses",html);
+}
+function addCo(){ var n=document.getElementById("co-nm").value.trim(); if(!n) return; var id=uid(); D.courses.list[id]={id:id,name:n,platform:document.getElementById("co-pl").value,progress:0,notes:[],startDate:today()}; save(); rCourses(); }
+function opnCo(cid){ window._cid=cid; nav2("cod",D.courses.list[cid]&&D.courses.list[cid].name||"","🎓",function(){rCod(cid);}); }
+function rCod(cid,sf){
+  var c=D.courses.list[cid]; if(!c) return;
+  var html='<div class="card" style="margin-bottom:12px"><div style="font-size:12px;color:#888;margin-bottom:6px">التقدم</div><input type="range" min="0" max="100" value="'+(c.progress||0)+'" oninput="document.getElementById(\'pv\').textContent=this.value+\'%\';window._np=this.value"><div class="fr" style="justify-content:space-between;margin-top:4px"><span id="pv" style="font-size:13px;color:#C8894A;font-weight:bold">'+(c.progress||0)+'%</span><button class="bs" onclick="svPr(\''+cid+'\')">حفظ</button></div></div>';
+  html+='<button class="bd" onclick="rCod(\''+cid+'\',true)">📝 أضف ملاحظة</button>';
+  if(sf) html+='<div class="fb"><textarea id="co-nt" class="ta" rows="3" placeholder="ماذا تعلمت اليوم؟" style="margin-bottom:8px"></textarea><div class="fr"><button class="bm" style="flex:1" onclick="addCoN(\''+cid+'\')">حفظ</button><button class="bc" onclick="rCod(\''+cid+'\')">إلغاء</button></div></div>';
+  html+='<div style="font-size:13px;font-weight:bold;color:#6B3A2A;margin-bottom:8px">الملاحظات ('+((c.notes||[]).length)+')</div>';
+  var notes=(c.notes||[]).slice().reverse();
+  if(notes.length===0) html+='<div class="empty">لا توجد ملاحظات بعد</div>';
+  for(var i=0;i<notes.length;i++){
+    var note=notes[i];
+    html+='<div class="card" style="margin-bottom:8px;padding:12px"><div style="font-size:11px;color:#bbb;margin-bottom:4px">'+note.date+'</div><div style="font-size:13px;line-height:1.6">'+h(note.text)+'</div><button class="bd0" style="margin-top:6px" onclick="delCoN(\''+cid+'\',\''+note.id+'\')">✕</button></div>';
+  }
+  set("cod",html);
+}
+function svPr(cid){ D.courses.list[cid].progress=Number(window._np||D.courses.list[cid].progress||0); save(); rCod(cid); }
+function addCoN(cid){ var tx=document.getElementById("co-nt").value.trim(); if(!tx) return; D.courses.list[cid].notes.push({id:uid(),text:tx,date:today()}); save(); rCod(cid); }
+function delCoN(cid,nid){ D.courses.list[cid].notes=D.courses.list[cid].notes.filter(function(n){return n.id!==nid;}); save(); rCod(cid); }
+
+// ═══════════ CONTENT ═══════════
+function rContent(){
+  var secs=[{k:"books",ic:"📖",lb:"الكتب",cnt:D.content.books.length},{k:"podcasts",ic:"🎙️",lb:"البودكاست",cnt:D.content.podcasts.length},{k:"movies",ic:"🎬",lb:"الأفلام",cnt:D.content.movies.length},{k:"youtube",ic:"▶️",lb:"يوتيوب",cnt:D.content.youtube.length}];
+  var html='<div class="g2">';
+  for(var i=0;i<secs.length;i++){
+    var s=secs[i];
+    html+='<div class="hc" style="padding:20px;cursor:pointer" onclick="opnCS(\''+s.k+'\')"><div style="font-size:32px;margin-bottom:8px">'+s.ic+'</div><div style="font-size:15px;font-weight:bold">'+s.lb+'</div><div style="font-size:12px;color:#999;margin-top:4px">'+s.cnt+' عنصر</div></div>';
+  }
+  html+='</div>';
+  set("content",html);
+}
+var _CF={books:{tl:"اسم الكتاب",au:"المؤلف",nt:"ملخص",st:["قرأت","أقرأ","أريد قراءته"]},podcasts:{tl:"اسم الحلقة",au:"القناة",nt:"أفكار",st:["استمعت","أستمع","أريد سماعه"]},movies:{tl:"اسم الفيلم",au:"المخرج",nt:"رأيي",st:["شاهدت","أشاهد","أريد مشاهدته"]},youtube:{tl:"اسم السلسلة",au:"القناة",nt:"وصف",st:["أتابع","انتهيت","أريد متابعتها"]}};
+function opnCS(sec){ window._sec=sec; var lbs={books:"الكتب",podcasts:"البودكاست",movies:"الأفلام",youtube:"يوتيوب"}; pageStack.push("cs"); showPg("cs",lbs[sec],"📚",true); rCS(sec); }
+function rCS(sec,sf){
+  var cf=_CF[sec],items=D.content[sec]||[];
+  var html='<button class="bd" onclick="rCS(\''+sec+'\',true)">+ أضف '+(sec==="youtube"?"سلسلة":"جديد")+'</button>';
+  if(sf){
+    html+='<div class="fb"><input id="cs-tl" class="inp" placeholder="'+h(cf.tl)+' *" style="margin-bottom:8px"><input id="cs-au" class="inp" placeholder="'+h(cf.au)+'" style="margin-bottom:8px"><textarea id="cs-nt" class="ta" rows="2" placeholder="'+h(cf.nt)+'" style="margin-bottom:8px"></textarea><select id="cs-st" class="inp" style="margin-bottom:8px">';
+    for(var i=0;i<cf.st.length;i++) html+='<option>'+cf.st[i]+'</option>';
+    html+='</select><div class="fr"><button class="bm" style="flex:1" onclick="addCI(\''+sec+'\')">حفظ</button><button class="bc" onclick="rCS(\''+sec+'\')">إلغاء</button></div></div>';
+  }
+  if(items.length===0) html+='<div class="empty">لا يوجد شيء بعد</div>';
+  for(var i=0;i<items.length;i++){
+    var item=items[i];
+    html+='<div class="card" style="margin-bottom:10px"><div class="fr" style="justify-content:space-between;align-items:flex-start"><div style="flex:1;cursor:'+(sec==="youtube"?"pointer":"default")+'"'+(sec==="youtube"?' onclick="opnYTS(\''+item.id+'\')"':'')+' ><div style="font-size:14px;font-weight:bold">'+h(item.title)+'</div>'+(item.author?'<div style="font-size:12px;color:#999">'+h(item.author)+'</div>':'')+(sec==="youtube"?'<div style="font-size:11px;color:#C8894A;margin-top:3px">'+((item.episodes||[]).length)+' فيديو ← اضغط</div>':'')+'</div><div class="fr"><span class="tag" style="background:#D6C4A8">'+h(item.status)+'</span><button class="bd0" onclick="delCI(\''+sec+'\',\''+item.id+'\')">✕</button></div></div>'+(item.notes&&sec!=="youtube"?'<div style="font-size:12px;color:#666;margin-top:6px;line-height:1.6">'+h(item.notes)+'</div>':'')+'</div>';
+  }
+  set("cs",html);
+}
+function addCI(sec){ var tl=document.getElementById("cs-tl").value.trim(); if(!tl) return; D.content[sec].unshift({id:uid(),title:tl,author:document.getElementById("cs-au").value,notes:document.getElementById("cs-nt").value,status:document.getElementById("cs-st").value,date:today(),episodes:[]}); save(); rCS(sec); }
+function delCI(sec,id){ D.content[sec]=D.content[sec].filter(function(x){return x.id!==id;}); save(); rCS(sec); }
+
+function opnYTS(id){ window._sid=id; var s=D.content.youtube.filter(function(x){return x.id===id;})[0]; pageStack.push("yt-series"); showPg("yt-series",s&&s.title||"","▶️",true); rYTS(id); }
+function rYTS(id,sf){
+  var s=D.content.youtube.filter(function(x){return x.id===id;})[0]; if(!s) return;
+  var html='<div class="card" style="margin-bottom:12px;border-right:4px solid #D6C4A8"><div style="font-size:15px;font-weight:bold">'+h(s.title)+'</div>'+(s.author?'<div style="font-size:12px;color:#999">'+h(s.author)+'</div>':'')+'</div>';
+  html+='<button class="bd" onclick="rYTS(\''+id+'\',true)">+ أضف فيديو</button>';
+  if(sf){
+    html+='<div class="fb"><input id="ep-tl" class="inp" placeholder="عنوان الفيديو *" style="margin-bottom:8px">';
+    var fields=[["ep-nt","📝 محتوى"],["ep-bn","💡 الفوائد"],["ep-qt","💬 اقتباسات"],["ep-tk","✅ واجبات"]];
+    for(var i=0;i<fields.length;i++) html+='<div class="lbl" style="margin-top:4px">'+fields[i][1]+'</div><textarea id="'+fields[i][0]+'" class="ta" rows="3" style="margin-bottom:6px"></textarea>';
+    html+='<div class="fr"><button class="bm" style="flex:1" onclick="addYTE(\''+id+'\')">حفظ</button><button class="bc" onclick="rYTS(\''+id+'\')">إلغاء</button></div></div>';
+  }
+  var eps=(s.episodes||[]).slice().reverse();
+  if(eps.length===0) html+='<div class="empty">لا توجد فيديوهات بعد</div>';
+  for(var i=0;i<eps.length;i++){
+    var ep=eps[i];
+    html+='<div class="card" style="margin-bottom:10px;cursor:pointer" onclick="opnYTE(\''+id+'\',\''+ep.id+'\')"><div style="font-size:14px;font-weight:bold">'+h(ep.title)+'</div><div class="fr" style="gap:6px;margin-top:6px;flex-wrap:wrap">'+(ep.notes?'<span class="tag" style="background:#9BB5D6;color:white">📝</span>':"")+(ep.benefits?'<span class="tag" style="background:#A8C4A2;color:white">💡</span>':"")+(ep.quotes?'<span class="tag" style="background:#C4A8D6;color:white">💬</span>':"")+(ep.tasks?'<span class="tag" style="background:#E8A598;color:white">✅</span>':"")+' </div></div>';
+  }
+  set("yt-series",html);
+}
+function addYTE(sid){ var tl=document.getElementById("ep-tl").value.trim(); if(!tl) return; var s=D.content.youtube.filter(function(x){return x.id===sid;})[0]; if(!s.episodes) s.episodes=[]; s.episodes.push({id:uid(),title:tl,notes:document.getElementById("ep-nt").value,benefits:document.getElementById("ep-bn").value,quotes:document.getElementById("ep-qt").value,tasks:document.getElementById("ep-tk").value,date:today()}); save(); rYTS(sid); }
+function opnYTE(sid,epid){ window._sid=sid; window._epid=epid; var s=D.content.youtube.filter(function(x){return x.id===sid;})[0]; var ep=(s&&s.episodes||[]).filter(function(x){return x.id===epid;})[0]; pageStack.push("yt-ep"); showPg("yt-ep",ep&&ep.title||"","▶️",true); var flds=[["📝 المحتوى",ep.notes],["💡 الفوائد",ep.benefits],["💬 اقتباسات",ep.quotes],["✅ واجبات",ep.tasks]]; var html=""; for(var i=0;i<flds.length;i++){if(flds[i][1]) html+='<div class="card" style="margin-bottom:10px"><div style="font-size:12px;font-weight:bold;color:#6B3A2A;margin-bottom:6px">'+flds[i][0]+'</div><div style="font-size:13px;line-height:1.8;white-space:pre-wrap">'+h(flds[i][1])+'</div></div>';} html+='<div class="fr" style="margin-top:14px"><button class="bs" style="flex:1;padding:10px;background:#E8A598;color:#6B3A2A" onclick="delYTE(\''+sid+'\',\''+epid+'\')">🗑 حذف</button></div>'; set("yt-ep",html); }
+function delYTE(sid,epid){ if(!confirm("تحذف؟")) return; var s=D.content.youtube.filter(function(x){return x.id===sid;})[0]; s.episodes=s.episodes.filter(function(x){return x.id!==epid;}); save(); goBack(); }
+
+// ═══════════ ENGLISH ═══════════
+function rEnglish(){
+  var secs=[["en-episodes","🎙️","الحلقات والدروس",D.english.episodes.length],["en-vocab","📖","المفردات",D.english.vocab.length],["en-grammar","📐","القواعد",D.english.grammar.length],["en-expr","💬","تعابير وأمثال",D.english.expressions.length]];
+  var html='<div style="font-size:13px;color:#4a7c59;background:#F0FAF0;border-right:4px solid #A8C4A2;padding:10px;border-radius:10px;margin-bottom:14px;line-height:1.7">🇬🇧 سجّل كل حاجة بتتعلمها</div><div class="g2">';
+  for(var i=0;i<secs.length;i++){
+    var s=secs[i];
+    html+='<div class="hc" style="padding:18px;cursor:pointer" onclick="opnEnS(\''+s[0]+'\')"><div style="font-size:28px;margin-bottom:6px">'+s[1]+'</div><div style="font-size:14px;font-weight:bold">'+s[2]+'</div><div style="font-size:12px;color:#C8894A;font-weight:bold;margin-top:4px">'+s[3]+' عنصر</div></div>';
+  }
+  html+='</div>';
+  set("english",html);
+}
+var _enLbs={"en-episodes":"الحلقات والدروس","en-vocab":"المفردات","en-grammar":"القواعد","en-expr":"تعابير وأمثال"};
+var _enIcs={"en-episodes":"🎙️","en-vocab":"📖","en-grammar":"📐","en-expr":"💬"};
+function opnEnS(k){ pageStack.push(k); showPg(k,_enLbs[k],_enIcs[k],true); if(k==="en-episodes") rEnEps(); else if(k==="en-vocab") rEnVocab(); else if(k==="en-grammar") rEnGr(); else rEnEx(); }
+
+function rEnEps(sf,editId){
+  var eps=D.english.episodes;
+  var editEp=editId?eps.filter(function(x){return x.id===editId;})[0]:null;
+  var html='<button class="bd" onclick="rEnEps(true)">+ أضف حلقة / درس</button>';
+  if(sf){
+    html+='<div><div class="sec-block" style="border-right:4px solid #9BB5D6"><div style="font-size:14px;font-weight:bold;color:#6B3A2A;margin-bottom:8px">🎙️ عنوان الحلقة</div><input id="en-tl" class="inp" placeholder="عنوان الحلقة *" style="margin-bottom:8px" value="'+h(editEp?editEp.title:"")+'"><input id="en-src" class="inp" placeholder="المصدر..." value="'+h(editEp?editEp.source||"":"")+'"></div><div class="sec-block" style="border-right:4px solid #A8C4A2"><div style="font-size:14px;font-weight:bold;color:#6B3A2A;margin-bottom:4px">📄 محتوى الدرس</div><div class="lbl">انسخ كل حاجة هنا — ملخصات، جداول، مواضيع متعددة</div><textarea id="en-cnt" class="ta" rows="18" placeholder="انسخ هنا بحرية...">'+h(editEp?editEp.content||"":"")+'</textarea></div><div class="fr"><button class="bm" style="flex:1" onclick="svEnEp('+(editId?"\'"+editId+"\'":"null")+')">💾 حفظ</button><button class="bc" onclick="rEnEps()">إلغاء</button></div></div>';
+  }
+  if(eps.length===0&&!sf) html+='<div class="empty">لا توجد حلقات بعد</div>';
+  for(var i=0;i<eps.length;i++){
+    var ep=eps[i];
+    html+='<div class="card" style="margin-bottom:10px;cursor:pointer" onclick="opnEnEp(\''+ep.id+'\')"><div style="font-size:14px;font-weight:bold">'+h(ep.title)+'</div>'+(ep.source?'<div style="font-size:11px;color:#C8894A;margin-top:2px">📻 '+h(ep.source)+'</div>':'')+'<div style="font-size:11px;color:#bbb;margin-top:4px">'+ep.date+'</div></div>';
+  }
+  set("en-episodes",html);
+}
+function svEnEp(editId){ var tl=document.getElementById("en-tl").value.trim(); if(!tl) return; var ep={id:editId||uid(),title:tl,source:document.getElementById("en-src").value,content:document.getElementById("en-cnt").value,date:today()}; if(editId){ D.english.episodes=D.english.episodes.map(function(x){return x.id===editId?ep:x;}); } else { D.english.episodes.unshift(ep); } save(); rEnEps(); }
+function opnEnEp(id){ window._eid=id; pageStack.push("en-ep-d"); var ep=D.english.episodes.filter(function(x){return x.id===id;})[0]; showPg("en-ep-d",ep&&ep.title||"","🎙️",true); rEnEpD(id); }
+function rEnEpD(id){
+  var ep=D.english.episodes.filter(function(x){return x.id===id;})[0]; if(!ep) return;
+  var blocks=[],lines=(ep.content||"").split("\n");
+  for(var i=0;i<lines.length;i++){
+    var line=lines[i];
+    var pc=(line.match(/\|/g)||[]).length;
+    var tc=line.split("\t").length;
+    var isSep=line.trim().match(/^[|\-+:\s]+$/)&&pc>=1;
+    if(isSep) continue;
+    var isT=(pc>=2)||(tc>=3);
+    var last=blocks[blocks.length-1];
+    if(isT){ if(last&&last.t==="tbl") last.lines.push(line); else blocks.push({t:"tbl",lines:[line]}); }
+    else { if(last&&last.t==="txt") last.lines.push(line); else blocks.push({t:"txt",lines:[line]}); }
+  }
+  var rendered="";
+  for(var i=0;i<blocks.length;i++){
+    var b=blocks[i];
+    if(b.t==="txt"){
+      var tx=b.lines.join("\n").trim();
+      if(tx) rendered+='<div style="font-size:13px;line-height:2;color:#333;margin-bottom:14px;white-space:pre-wrap">'+h(tx)+'</div>';
+    } else {
+      var rows=[];
+      for(var j=0;j<b.lines.length;j++){
+        var l=b.lines[j];
+        var row=l.indexOf("\t")>=0?l.split("\t"):l.replace(/^\|/,"").replace(/\|$/,"").split("|");
+        row=row.map(function(c){return c.trim();});
+        if(row.length>=2&&row[0]) rows.push(row);
+      }
+      if(!rows.length) continue;
+      var mc=0; for(var j=0;j<rows.length;j++) if(rows[j].length>mc) mc=rows[j].length;
+      var isH=rows[0]&&["word","النطق","english","عربي","ex","definition"].some(function(kw){return rows[0].join("").toLowerCase().indexOf(kw)>=0;});
+      var hd=rows[0],dr=isH?rows.slice(1):rows;
+      rendered+='<div class="tw"><table><thead><tr>';
+      for(var j=0;j<hd.length;j++) rendered+='<th>'+h(hd[j])+'</th>';
+      rendered+='</tr></thead><tbody>';
+      for(var j=0;j<dr.length;j++){
+        rendered+='<tr>';
+        for(var k=0;k<mc;k++) rendered+='<td style="color:'+(k===0?"#2C1A0E":k===1?"#C8894A":"#555")+';font-weight:'+(k===0?"bold":"normal")+'">'+(dr[j][k]?h(dr[j][k]):"")+'</td>';
+        rendered+='</tr>';
+      }
+      rendered+='</tbody></table></div>';
+    }
+  }
+  var html='<div class="card" style="margin-bottom:12px"><div style="font-size:17px;font-weight:bold;margin-bottom:4px">'+h(ep.title)+'</div>'+(ep.source?'<div style="font-size:12px;color:#C8894A">📻 '+h(ep.source)+' · '+ep.date+'</div>':'<div style="font-size:11px;color:#bbb">'+ep.date+'</div>')+'</div>';
+  html+=rendered;
+  html+='<div class="fr" style="margin-top:14px"><button class="bs" style="flex:1;padding:10px;background:#9BB5D6;color:white" onclick="edEnEp(\''+id+'\')">✏️ تعديل</button><button class="bs" style="flex:1;padding:10px;background:#E8A598;color:#6B3A2A" onclick="delEnEp(\''+id+'\')">🗑 حذف</button></div>';
+  set("en-ep-d",html);
+}
+function edEnEp(id){ pageStack.pop(); showPg("en-episodes","الحلقات والدروس","🎙️",true); rEnEps(true,id); }
+function delEnEp(id){ if(!confirm("تحذف الدرس؟")) return; D.english.episodes=D.english.episodes.filter(function(x){return x.id!==id;}); save(); goBack(); }
+
+function rEnVocab(q,sf){ q=q||"";
+  var vocab=D.english.vocab.filter(function(v){return !q||(v.word||"").toLowerCase().indexOf(q.toLowerCase())>=0||(v.arMeaning||"").indexOf(q)>=0;});
+  var html='<div class="fr" style="margin-bottom:12px"><input class="inp" style="flex:1" value="'+h(q)+'" placeholder="🔍 ابحث..." oninput="rEnVocab(this.value)"><button class="bm" style="margin-right:8px" onclick="rEnVocab(\'\',true)">+ أضف</button></div>';
+  if(sf) html+='<div class="fb">'+'<input id="en-vw" class="inp" placeholder="الكلمة *" style="margin-bottom:8px">'+'<input id="en-vp" class="inp" placeholder="النطق" style="margin-bottom:8px">'+'<input id="en-ve" class="inp" placeholder="التعريف إنجليزي" style="margin-bottom:8px">'+'<input id="en-va" class="inp" placeholder="المعنى عربي" style="margin-bottom:8px">'+'<input id="en-vx" class="inp" placeholder="مثال" style="margin-bottom:8px">'+'<div class="fr"><button class="bm" style="flex:1" onclick="addEnV()">حفظ</button><button class="bc" onclick="rEnVocab()">إلغاء</button></div></div>';
+  if(vocab.length===0) html+='<div class="empty">لا توجد مفردات بعد</div>';
+  else {
+    html+='<div class="tw"><table><thead><tr><th>Word</th><th>النطق</th><th>English</th><th>عربي</th></tr></thead><tbody>';
+    for(var i=0;i<vocab.length;i++){
+      var v=vocab[i];
+      html+='<tr><td style="font-weight:bold;color:#2C1A0E">'+h(v.word)+'</td><td style="color:#C8894A">'+h(v.pronunciation||"")+'</td><td style="color:#444">'+h((v.enDef||"").slice(0,25))+(v.enDef&&v.enDef.length>25?"...":"")+'</td><td style="color:#6B3A2A">'+h(v.arMeaning||"")+'</td></tr>';
+    }
+    html+='</tbody></table></div>';
+  }
+  set("en-vocab",html);
+}
+function addEnV(){ var w=document.getElementById("en-vw").value.trim(); if(!w) return; D.english.vocab.unshift({id:uid(),word:w,pronunciation:document.getElementById("en-vp").value,enDef:document.getElementById("en-ve").value,arMeaning:document.getElementById("en-va").value,example:document.getElementById("en-vx").value,date:today()}); save(); rEnVocab(); }
+
+function rEnGr(sf){
+  var html='<button class="bd" onclick="rEnGr(true)">+ أضف قاعدة</button>';
+  if(sf) html+='<div class="fb"><input id="gr-tl" class="inp" placeholder="اسم القاعدة *" style="margin-bottom:8px"><textarea id="gr-ex" class="ta" rows="3" placeholder="الشرح..." style="margin-bottom:8px"></textarea><textarea id="gr-eg" class="ta" rows="3" placeholder="أمثلة..." style="margin-bottom:8px"></textarea><div class="fr"><button class="bm" style="flex:1" onclick="addEnGr()">حفظ</button><button class="bc" onclick="rEnGr()">إلغاء</button></div></div>';
+  var list=D.english.grammar;
+  if(list.length===0) html+='<div class="empty">لا توجد قواعد بعد</div>';
+  for(var i=0;i<list.length;i++){
+    var g=list[i];
+    html+='<div class="card" style="margin-bottom:10px;padding:14px"><div style="font-size:14px;font-weight:bold;margin-bottom:6px">'+h(g.title)+'</div>'+(g.explanation?'<div style="font-size:13px;line-height:1.7;color:#333;margin-bottom:6px">'+h(g.explanation)+'</div>':'')+(g.examples?'<div style="background:#FDF6EE;border-radius:8px;padding:8px;font-size:12px;color:#555;border-right:3px solid #C8894A">'+h(g.examples)+'</div>':'')+'<button class="bd0" style="margin-top:6px" onclick="delEnGr(\''+g.id+'\')">✕</button></div>';
+  }
+  set("en-grammar",html);
+}
+function addEnGr(){ var tl=document.getElementById("gr-tl").value.trim(); if(!tl) return; D.english.grammar.unshift({id:uid(),title:tl,explanation:document.getElementById("gr-ex").value,examples:document.getElementById("gr-eg").value,date:today()}); save(); rEnGr(); }
+function delEnGr(id){ D.english.grammar=D.english.grammar.filter(function(x){return x.id!==id;}); save(); rEnGr(); }
+
+function rEnEx(sf){
+  var html='<button class="bd" onclick="rEnEx(true)">+ أضف تعبير</button>';
+  if(sf) html+='<div class="fb"><input id="ex-tl" class="inp" placeholder="التعبير *" style="margin-bottom:8px"><textarea id="ex-ex" class="ta" rows="2" placeholder="المعنى والشرح..." style="margin-bottom:8px"></textarea><textarea id="ex-eg" class="ta" rows="2" placeholder="مثال..." style="margin-bottom:8px"></textarea><div class="fr"><button class="bm" style="flex:1" onclick="addEnEx()">حفظ</button><button class="bc" onclick="rEnEx()">إلغاء</button></div></div>';
+  var list=D.english.expressions;
+  if(list.length===0) html+='<div class="empty">لا توجد تعابير بعد</div>';
+  for(var i=0;i<list.length;i++){
+    var e=list[i];
+    html+='<div class="card" style="margin-bottom:10px;padding:14px"><div style="font-size:15px;font-weight:bold;margin-bottom:4px">'+h(e.title)+'</div>'+(e.explanation?'<div style="font-size:13px;color:#444;margin-bottom:6px;line-height:1.7">'+h(e.explanation)+'</div>':'')+(e.examples?'<div style="background:#FDF6EE;border-radius:8px;padding:8px;font-size:12px;color:#555;font-style:italic;border-right:3px solid #C8894A">'+h(e.examples)+'</div>':'')+'<button class="bd0" style="margin-top:6px" onclick="delEnEx(\''+e.id+'\')">✕</button></div>';
+  }
+  set("en-expr",html);
+}
+function addEnEx(){ var tl=document.getElementById("ex-tl").value.trim(); if(!tl) return; D.english.expressions.unshift({id:uid(),title:tl,explanation:document.getElementById("ex-ex").value,examples:document.getElementById("ex-eg").value,date:today()}); save(); rEnEx(); }
+function delEnEx(id){ D.english.expressions=D.english.expressions.filter(function(x){return x.id!==id;}); save(); rEnEx(); }
+
+// ═══════════ EXTRA PAGES ═══════════
+function exportData(){
+  var json=JSON.stringify(D,null,2);
+  // Try Blob method first (works on HTTPS)
+  try{
+    var b=new Blob([json],{type:"application/json"});
+    var u=URL.createObjectURL(b);
+    var a=document.createElement("a");
+    a.href=u; a.download="حياتي-backup-"+today()+".json";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){document.body.removeChild(a);URL.revokeObjectURL(u);},100);
+    return;
+  }catch(e){}
+  // Fallback: data URI
+  try{
+    var uri="data:application/json;charset=utf-8,"+encodeURIComponent(json);
+    var a=document.createElement("a");
+    a.href=uri; a.download="حياتي-backup-"+today()+".json";
+    document.body.appendChild(a); a.click();
+    setTimeout(function(){document.body.removeChild(a);},100);
+    return;
+  }catch(e){}
+  // Last resort: show in textarea to copy
+  var w=window.open("","_blank","width=600,height=400");
+  if(w){
+    w.document.write("<html><body dir='rtl' style='font-family:Arial;padding:20px'><h3>انسخ البيانات دي واحفظها:</h3><textarea style='width:100%;height:300px;font-size:11px'>"+json.replace(/</g,"&lt;")+"</textarea></body></html>");
+  } else {
+    // If popup blocked, put in a modal
+    var d=document.createElement("div");
+    d.style="position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);z-index:9999;padding:20px;direction:rtl";
+    d.innerHTML="<div style='background:white;border-radius:14px;padding:16px;height:100%'><div style='display:flex;justify-content:space-between;margin-bottom:10px'><b>انسخ البيانات واحفظها في ملف نصي:</b><button onclick='this.parentElement.parentElement.parentElement.remove()' style='border:none;background:#C8894A;color:white;border-radius:8px;padding:4px 12px'>إغلاق</button></div><textarea style='width:100%;height:80%;font-size:10px;border:1px solid #ccc;border-radius:8px;padding:8px' onclick='this.select()'>"+json+"</textarea></div>";
+    document.body.appendChild(d);
+  }
+}
+function triggerImp(t){ document.getElementById("imp-"+t).click(); }
+function importJSON(e){ var f=e.target.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(ev){ try{ var p=JSON.parse(ev.target.result); localStorage.setItem(SK,JSON.stringify(p)); alert("✅ تم الاستيراد! جاري التحديث..."); location.reload(); }catch(err){alert("❌ "+err.message);} }; r.readAsText(f); e.target.value=""; }
+function importHTML(e){ var f=e.target.files[0]; if(!f) return; var r=new FileReader(); r.onload=function(ev){ try{ var name=f.name.replace(/\.html?$/i,""); var html=ev.target.result; var builtins={"schedule":["schedule","جدول","21"],"ruqya":["ruqya","رقية","الرقية"]}; var matched=null; for(var k in builtins){ var kws=builtins[k]; for(var i=0;i<kws.length;i++){ if(name.toLowerCase().indexOf(kws[i].toLowerCase())>=0){matched=k;break;} } if(matched) break; } if(matched){ localStorage.setItem("hayati-iframe-"+matched,html); frLoaded[matched]=false; alert("✅ تم تحميل الصفحة! افتح التبويب لرؤيتها."); } else { if(!D.extraPages) D.extraPages=[]; var id="extra-"+uid(); D.extraPages.push({id:id,name:name,date:today()}); save(); localStorage.setItem("hayati-iframe-"+id,html); addEPdom(id,name); buildNav(); alert("✅ تمت إضافة: "+name); } }catch(err){alert("❌ "+err.message);} }; r.readAsText(f); e.target.value=""; }
+function addEPdom(id,name){ if(document.getElementById("pg-"+id)) return; var div=document.createElement("div"); div.id="pg-"+id; div.className="page iframe-pg"; var fr=document.createElement("iframe"); fr.id="fr-"+id; fr.title=name; div.appendChild(fr); document.getElementById("app").appendChild(div); }
+function delEP(id){ if(!confirm("تحذف الصفحة؟")) return; D.extraPages=D.extraPages.filter(function(p){return p.id!==id;}); save(); localStorage.removeItem("hayati-iframe-"+id); var pg=document.getElementById("pg-"+id); if(pg) pg.remove(); buildNav(); rHome(); }
+
+// ═══════════ INIT ═══════════
+load();
+(D.extraPages||[]).forEach(function(p){ addEPdom(p.id,p.name); });
+buildNav();
+sw("home");
+
+</script>
+</body>
+</html>
